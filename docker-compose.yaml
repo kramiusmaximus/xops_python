@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  postgres_db:
+    image: postgres:latest
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "${DB_PORT}:5432"
+
+  fastapi-backend:
+    build:
+      context: './app/'
+      dockerfile: 'dockerfile.yaml'
+    ports:
+      - "${FASTAPI_BACKEND_PORT}:8000"
+    depends_on:
+      - postgres_db
+    environment:
+      DB_URL: ${DB_URL}
+volumes:
+  db-data:
